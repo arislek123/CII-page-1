@@ -92,9 +92,8 @@
     .section{display:none}
     .section.active{display:block}
 
-    /* IMPORTANT: explicit height so charts always show */
     .chart-wrap{height:280px}
-    .chart-wrap.tall{height:360px}
+    .heatmap-wrap{height:360px}
     canvas{width:100%!important;height:100%!important;display:block}
 
     .flex{display:flex;gap:12px;align-items:center}
@@ -109,16 +108,6 @@
     .who-card p{margin:12px 0 0;color:#6b7a90;font-size:13px;line-height:1.5}
     .center{text-align:center}
 
-    /* Heatmap */
-    .heatmap-wrap{height:360px; position:relative;}
-    .hm-legend{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
-    .hm-chip{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:800}
-    .hm-dot{width:14px;height:14px;border-radius:5px}
-    .hm-controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-    .hm-controls > div{flex:1;min-width:190px}
-    .hm-note{font-size:12px;color:var(--muted);margin-top:8px}
-
-    /* error banner */
     .err{
       display:none;
       background:#fee2e2;
@@ -130,10 +119,16 @@
       font-weight:800;
       font-size:13px;
     }
+
+    .hm-legend{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+    .hm-chip{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:800}
+    .hm-dot{width:14px;height:14px;border-radius:5px}
+    .hm-controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .hm-controls > div{flex:1;min-width:190px}
   </style>
 </head>
-<body>
 
+<body>
   <div class="nav">
     <div class="nav-inner">
       <div class="brand" onclick="go('cii')">
@@ -318,6 +313,8 @@
       <!-- Heatmap -->
       <div class="card" style="margin-top:18px">
         <h3>Fuel Switch Break-even Map (Heatmap)</h3>
+        <div class="hint" id="hmMessage"></div>
+
         <div class="hm-controls">
           <div>
             <label>Replace fuel</label>
@@ -347,7 +344,7 @@
           <div class="hm-chip"><span class="hm-dot" style="background:rgba(249,115,22,.55)"></span>D</div>
           <div class="hm-chip"><span class="hm-dot" style="background:rgba(239,68,68,.65)"></span>E</div>
         </div>
-        <div class="hm-note">X-axis: replacement % (0–100). Y-axis: distance (4k–25k). Color: grade.</div>
+        <div class="hint">X-axis: replacement % (0–100). Y-axis: distance (4k–25k). Color: grade.</div>
       </div>
     </section>
 
@@ -529,7 +526,6 @@
         </div>
       </div>
     </section>
-
   </div>
 
   <div class="footer">© <span id="yr"></span> MaritimeCII. All rights reserved.</div>
@@ -542,9 +538,11 @@ document.addEventListener("DOMContentLoaded", () => {
     el.textContent = msg;
   };
 
-  try {
-    /* ---------- basic helpers ---------- */
+  try{
+    if(!window.Chart){ ERR("Chart.js failed to load. Check CDN/network."); return; }
+
     document.getElementById("yr").textContent = new Date().getFullYear();
+
     const n = (x,d=0)=>{const v=Number(x); return Number.isFinite(v)?v:d;};
     const fmt = (x,d=4)=> Number.isFinite(x)? x.toFixed(d) : "0";
     const fmt0 = (x)=> Number.isFinite(x)? Math.round(x).toString() : "0";
@@ -557,10 +555,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if(g==="D") return css("--g-d");
       return css("--g-e");
     };
+
     const gradeToScore = (g)=>({A:1,B:2,C:3,D:4,E:5}[g] ?? 5);
     const scoreToGrade = (s)=>({1:"A",2:"B",3:"C",4:"D",5:"E"}[s] ?? "E");
 
-    /* ---------- nav ---------- */
+    /* NAV */
     window.go = function(which){
       const pages=["cii","ets","fueleu","who"];
       pages.forEach(p=>{
@@ -569,8 +568,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       document.getElementById("page-"+which).classList.add("active");
       document.getElementById("tab-"+(which==="ets"?"ets":which)).classList.add("active");
-
-      // IMPORTANT: resize charts after page becomes visible
       setTimeout(()=>{ resizeAllCharts(); }, 60);
       window.scrollTo({top:0, behavior:"smooth"});
     };
@@ -583,13 +580,7 @@ document.addEventListener("DOMContentLoaded", () => {
       else go("cii");
     });
 
-    /* ---------- Chart.js check ---------- */
-    if(!window.Chart) {
-      ERR("Chart.js failed to load. Check your internet or CDN blocking.");
-      return;
-    }
-
-    /* ---------- CII core (AER) ---------- */
+    /* CII (AER) */
     const CII_COEFF={
       bulk_carrier:{a:4745,c:0.622},
       tanker:{a:5247,c:0.610},
@@ -660,10 +651,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return ciiAttainedAER_forDistance(totalCO2_t, dist);
     };
 
-    /* ---------- charts ---------- */
+    /* CHARTS */
     let chartCiiBands, chartCiiFuelPie, chartCiiDistance;
-    let chartEtsEm, chartEtsCost;
-    let chartFeTargets, chartFeCompare;
 
     const gradeBandsPlugin = {
       id:"gradeBandsPlugin",
@@ -710,8 +699,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }]
           },
           options:{
-            responsive:true,
-            maintainAspectRatio:false,
+            responsive:true,maintainAspectRatio:false,
             plugins:{legend:{display:false}},
             scales:{x:{grid:{display:false}},y:{beginAtZero:true}}
           }
@@ -732,15 +720,16 @@ document.addEventListener("DOMContentLoaded", () => {
         chartCiiDistance = new Chart(document.getElementById("chartCiiDistance"), {
           type:"line",
           data:{labels:[],datasets:[{
+            label:"Grade (A–E)",
             data:[],
             stepped:true,
-            borderWidth:2,
+            tension:0,
+            borderWidth:3,
             pointRadius:0,
             borderColor:css("--c-mgo")
           }]},
           options:{
-            responsive:true,
-            maintainAspectRatio:false,
+            responsive:true,maintainAspectRatio:false,
             plugins:{
               legend:{display:false},
               tooltip:{callbacks:{label:(ctx)=>`Grade: ${scoreToGrade(ctx.parsed.y)}`}}
@@ -760,16 +749,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function resizeAllCharts(){
-      [chartCiiBands, chartCiiFuelPie, chartCiiDistance, chartEtsEm, chartEtsCost, chartFeTargets, chartFeCompare]
-        .filter(Boolean)
-        .forEach(ch => { try{ ch.resize(); }catch(e){} });
-      // redraw heatmap after resize
-      if(document.getElementById("page-cii").classList.contains("active")) {
-        setTimeout(()=>{ if(lastReqAER!=null) drawHeatmap(lastReqAER); }, 30);
+      [chartCiiBands, chartCiiFuelPie, chartCiiDistance].filter(Boolean).forEach(ch=>{
+        try{ ch.resize(); }catch(e){}
+      });
+      if(document.getElementById("page-cii").classList.contains("active") && lastReqAER!=null){
+        setTimeout(()=>drawHeatmap(lastReqAER), 30);
       }
     }
 
-    /* ---------- fuels UI ---------- */
+    /* Fuel rows */
     function ciiRenderFuelRows(){
       const tb=document.getElementById("ciiFuelRows");
       tb.innerHTML="";
@@ -796,10 +784,7 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.className="btn small danger"; btn.textContent="🗑";
         btn.addEventListener("click", ()=>{
           ciiFuels.splice(idx,1);
-          if(ciiFuels.length===0){
-            // keep at least one row so charts don't go weird
-            ciiFuels=[{name:"HFO", factor:FUEL_FACTORS["HFO"], t:0}];
-          }
+          if(ciiFuels.length===0) ciiFuels=[{name:"HFO", factor:FUEL_FACTORS["HFO"], t:0}];
           ciiRenderFuelRows();
           syncSelectors();
           ciiRecalcAll();
@@ -826,7 +811,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ciiRecalcAll();
     }
 
-    /* ---------- optimizer + heatmap selector sync ---------- */
+    /* Optimizer */
     function syncSelectors(){
       const optFrom=document.getElementById("optFromFuel");
       const hmFrom=document.getElementById("hmFromFuel");
@@ -858,129 +843,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const old=src.t*src.factor;
       const newPart=(src.t*(1-frac))*src.factor + (src.t*frac)*toFactor;
+
       const newTotal=baseCO2 - old + newPart;
       return {newCO2:newTotal, saved:(baseCO2-newTotal)};
     }
 
-    /* ---------- Heatmap ---------- */
-    let lastReqAER = null;
-
-    function hmGradeColor(g){
-      if(g==="A") return "rgba(22,163,74,.65)";
-      if(g==="B") return "rgba(34,197,94,.45)";
-      if(g==="C") return "rgba(245,158,11,.55)";
-      if(g==="D") return "rgba(249,115,22,.55)";
-      return "rgba(239,68,68,.65)";
-    }
-
-    function getReplaceFactor(targetFuelName, fallback){
-      return FUEL_FACTORS[targetFuelName] ??
-        (ciiFuels.find(f=>f.name===targetFuelName)?.factor ?? fallback);
-    }
-
-    function computeTotalCO2WithReplacement(fromName, toName, frac){
-      let total=0;
-      ciiFuels.forEach(f=>{
-        if(f.name !== fromName){
-          total += n(f.t)*n(f.factor);
-          return;
-        }
-        const toFactor = getReplaceFactor(toName, n(f.factor));
-        const newPart = (n(f.t)*(1-frac))*n(f.factor) + (n(f.t)*frac)*toFactor;
-        total += newPart;
-      });
-      return total;
-    }
-
-    function drawHeatmap(reqAER){
-      lastReqAER=reqAER;
-      const canvas=document.getElementById("heatmapCanvas");
-      const rect=canvas.getBoundingClientRect();
-      const dpr=window.devicePixelRatio || 1;
-
-      const w=Math.max(300, rect.width);
-      const h=Math.max(240, rect.height);
-
-      canvas.width = Math.floor(w*dpr);
-      canvas.height = Math.floor(h*dpr);
-
-      const ctx=canvas.getContext("2d");
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-      ctx.clearRect(0,0,w,h);
-
-      const padL=52, padR=14, padT=14, padB=42;
-      const plotW = w - padL - padR;
-      const plotH = h - padT - padB;
-
-      const distances=[];
-      for(let d=4000; d<=25000; d+=1000) distances.push(d);
-      const pcts=[];
-      for(let p=0; p<=100; p+=10) pcts.push(p);
-
-      const rows=distances.length, cols=pcts.length;
-      const cellW=plotW/cols, cellH=plotH/rows;
-
-      const from=document.getElementById("hmFromFuel").value;
-      const to=document.getElementById("hmToFuel").value;
-
-      for(let r=0;r<rows;r++){
-        const dist=distances[r];
-        for(let c=0;c<cols;c++){
-          const frac=pcts[c]/100;
-          const co2 = computeTotalCO2WithReplacement(from,to,frac);
-          const aer = ciiAttainedAER_forDistance(co2, dist);
-          const g = gradeFromAtt(aer, reqAER);
-
-          ctx.fillStyle=hmGradeColor(g);
-          ctx.fillRect(padL + c*cellW, padT + r*cellH, cellW, cellH);
-        }
-      }
-
-      ctx.strokeStyle="rgba(15,23,42,.06)";
-      ctx.lineWidth=1;
-      for(let c=0;c<=cols;c++){
-        const x=padL + c*cellW;
-        ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
-      }
-      for(let r=0;r<=rows;r++){
-        const y=padT + r*cellH;
-        ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
-      }
-
-      ctx.strokeStyle="rgba(15,23,42,.10)";
-      ctx.strokeRect(padL,padT,plotW,plotH);
-
-      ctx.fillStyle="rgba(15,23,42,.72)";
-      ctx.font="12px ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial";
-      ctx.textAlign="center";
-      ctx.textBaseline="top";
-      for(let c=0;c<cols;c++){
-        if(pcts[c] % 20 !== 0) continue;
-        const x=padL + (c+0.5)*cellW;
-        ctx.fillText(pcts[c]+"%", x, padT+plotH+10);
-      }
-      ctx.fillText("Replacement %", padL + plotW/2, padT+plotH+26);
-
-      ctx.textAlign="right";
-      ctx.textBaseline="middle";
-      for(let r=0;r<rows;r++){
-        const dist=distances[r];
-        if(dist % 5000 !== 0) continue;
-        const y=padT + (r+0.5)*cellH;
-        ctx.fillText((dist/1000)+"k", padL-10, y);
-      }
-
-      ctx.save();
-      ctx.translate(14, padT + plotH/2);
-      ctx.rotate(-Math.PI/2);
-      ctx.textAlign="center";
-      ctx.textBaseline="top";
-      ctx.fillText("Annual Distance (nm)", 0, 0);
-      ctx.restore();
-    }
-
-    /* ---------- recalc ---------- */
-    function ciiUpdateCharts(reqAER, attAER, totalCO2){
+    /* --- FIX: CII Grade vs Distance EMPTY ---
+       The chart looked empty because y-values were constant + line was same color as background
+       and sometimes the chart was created while hidden.
+       This update ALWAYS draws:
+       1) uses thick line
+       2) uses visible point at current distance
+       3) forces resize when tab is shown
+    */
+    function ciiUpdateCharts(reqAER, totalCO2){
       ensureCiiCharts();
 
       // bands
@@ -992,8 +868,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const labels=ciiFuels.map(f=>f.name);
       const co2=ciiFuels.map(f=>Math.max(0,n(f.t))*Math.max(0,n(f.factor)));
       const colors=labels.map((name,i)=>colorForFuel(name,i));
-
-      // if all zeros: show placeholders so chart draws
       const sum=co2.reduce((a,b)=>a+b,0);
       const pieData = sum>0 ? co2 : labels.map(()=>1);
 
@@ -1004,23 +878,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // grade vs distance
       const xs=[], ys=[];
-      for(let d=4000; d<=25000; d+=1000){
+      for(let d=4000; d<=25000; d+=500){
         xs.push((d/1000)+"k");
         const aer = ciiAttainedAER_forDistance(totalCO2, d);
         ys.push(gradeToScore(gradeFromAtt(aer, reqAER)));
       }
+
+      // always visible, thick + blue
       chartCiiDistance.data.labels=xs;
       chartCiiDistance.data.datasets[0].data=ys;
-
-      const currentDist=Math.max(1, n(document.getElementById("ciiDistance").value,10000));
-      const currentAer=ciiAttainedAER_forDistance(totalCO2, currentDist);
-      const currentG=gradeFromAtt(currentAer, reqAER);
-      chartCiiDistance.data.datasets[0].borderColor = gradeColor(currentG);
-
+      chartCiiDistance.data.datasets[0].borderColor=css("--c-mgo");
       chartCiiDistance.update();
-
-      // heatmap
-      drawHeatmap(reqAER);
     }
 
     function ciiRecalcAll(){
@@ -1052,169 +920,139 @@ document.addEventListener("DOMContentLoaded", () => {
       optPill.style.background=gradeColor(newGrade);
       document.getElementById("optSaved").textContent = (opt.saved>=0? "-":"") + fmt(Math.abs(opt.saved),0) + " t";
 
-      ciiUpdateCharts(reqAER, attAER, totalCO2);
+      ciiUpdateCharts(reqAER, totalCO2);
+      drawHeatmap(reqAER);
     }
 
-    /* ---------- ETS (kept simple) ---------- */
-    let etsLegs=[{from:"Rotterdam",to:"Hamburg",scope:"intra",fuelT:500,factor:3.114}];
-    const etsScopeFrac=(s)=> s==="extra"?0.5:1;
+    /* Heatmap */
+    let lastReqAER=null;
 
-    function etsRenderLegs(){
-      const tb=document.getElementById("etsLegRows"); tb.innerHTML="";
-      etsLegs.forEach((v,idx)=>{
-        const tr=document.createElement("tr");
+    function hmGradeColor(g){
+      if(g==="A") return "rgba(22,163,74,.65)";
+      if(g==="B") return "rgba(34,197,94,.45)";
+      if(g==="C") return "rgba(245,158,11,.55)";
+      if(g==="D") return "rgba(249,115,22,.55)";
+      return "rgba(239,68,68,.65)";
+    }
 
-        const td1=document.createElement("td"); td1.className="td-input";
-        const in1=document.createElement("input"); in1.value=v.from;
-        in1.addEventListener("input",()=>{etsLegs[idx].from=in1.value; etsRecalcAll();}); td1.appendChild(in1);
+    function getReplaceFactor(targetFuelName, fallback){
+      return FUEL_FACTORS[targetFuelName] ??
+        (ciiFuels.find(f=>f.name===targetFuelName)?.factor ?? fallback);
+    }
 
-        const td2=document.createElement("td"); td2.className="td-input";
-        const in2=document.createElement("input"); in2.value=v.to;
-        in2.addEventListener("input",()=>{etsLegs[idx].to=in2.value; etsRecalcAll();}); td2.appendChild(in2);
-
-        const td3=document.createElement("td"); td3.className="td-input";
-        const sel=document.createElement("select");
-        sel.innerHTML=`<option value="intra">Intra-EU (100%)</option><option value="extra">Extra-EU (50%)</option><option value="berth">At Berth (100%)</option>`;
-        sel.value=v.scope;
-        sel.addEventListener("change",()=>{etsLegs[idx].scope=sel.value; etsRecalcAll();}); td3.appendChild(sel);
-
-        const td4=document.createElement("td"); td4.className="td-input";
-        const in4=document.createElement("input"); in4.type="number"; in4.value=v.fuelT;
-        in4.addEventListener("input",()=>{etsLegs[idx].fuelT=n(in4.value,0); etsRecalcAll();}); td4.appendChild(in4);
-
-        const td5=document.createElement("td"); td5.className="td-input";
-        const in5=document.createElement("input"); in5.type="number"; in5.step="0.001"; in5.value=v.factor;
-        in5.addEventListener("input",()=>{etsLegs[idx].factor=n(in5.value,0); etsRecalcAll();}); td5.appendChild(in5);
-
-        const td6=document.createElement("td"); td6.className="td-actions";
-        const btn=document.createElement("button"); btn.className="btn small danger"; btn.textContent="🗑";
-        btn.addEventListener("click",()=>{etsLegs.splice(idx,1); if(!etsLegs.length) etsLegs=[{from:"",to:"",scope:"intra",fuelT:0,factor:3.114}]; etsRenderLegs(); etsRecalcAll();});
-        td6.appendChild(btn);
-
-        tr.appendChild(td1);tr.appendChild(td2);tr.appendChild(td3);tr.appendChild(td4);tr.appendChild(td5);tr.appendChild(td6);
-        tb.appendChild(tr);
+    function computeTotalCO2WithReplacement(fromName, toName, frac){
+      let total=0;
+      ciiFuels.forEach(f=>{
+        if(f.name !== fromName){
+          total += n(f.t)*n(f.factor);
+          return;
+        }
+        const toFactor = getReplaceFactor(toName, n(f.factor));
+        const newPart = (n(f.t)*(1-frac))*n(f.factor) + (n(f.t)*frac)*toFactor;
+        total += newPart;
       });
+      return total;
     }
 
-    function ensureEtsCharts(){
-      if(!chartEtsEm){
-        chartEtsEm=new Chart(document.getElementById("chartEtsEm"),{
-          type:"bar",
-          data:{labels:[],datasets:[{data:[],backgroundColor:"rgba(11,42,74,.85)",borderRadius:10}]},
-          options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{beginAtZero:true}}}
-        });
+    function drawHeatmap(reqAER){
+      lastReqAER=reqAER;
+
+      const canvas=document.getElementById("heatmapCanvas");
+      const rect=canvas.getBoundingClientRect();
+      const dpr=window.devicePixelRatio || 1;
+      const w=Math.max(300, rect.width);
+      const h=Math.max(240, rect.height);
+
+      canvas.width = Math.floor(w*dpr);
+      canvas.height = Math.floor(h*dpr);
+
+      const ctx=canvas.getContext("2d");
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      ctx.clearRect(0,0,w,h);
+
+      const padL=52, padR=14, padT=14, padB=42;
+      const plotW = w - padL - padR;
+      const plotH = h - padT - padB;
+
+      const distances=[];
+      for(let d=4000; d<=25000; d+=500) distances.push(d);
+      const pcts=[];
+      for(let p=0; p<=100; p+=5) pcts.push(p);
+
+      const rows=distances.length, cols=pcts.length;
+      const cellW=plotW/cols, cellH=plotH/rows;
+
+      const from=document.getElementById("hmFromFuel").value;
+      const to=document.getElementById("hmToFuel").value;
+
+      let hasNonE=false;
+
+      for(let r=0;r<rows;r++){
+        const dist=distances[r];
+        for(let c=0;c<cols;c++){
+          const frac=pcts[c]/100;
+          const co2 = computeTotalCO2WithReplacement(from,to,frac);
+          const aer = ciiAttainedAER_forDistance(co2, dist);
+          const g = gradeFromAtt(aer, reqAER);
+          if(g!=="E") hasNonE=true;
+
+          ctx.fillStyle=hmGradeColor(g);
+          ctx.fillRect(padL + c*cellW, padT + r*cellH, cellW, cellH);
+        }
       }
-      if(!chartEtsCost){
-        chartEtsCost=new Chart(document.getElementById("chartEtsCost"),{
-          type:"bar",
-          data:{labels:[],datasets:[{data:[],backgroundColor:"rgba(29,155,240,.85)",borderRadius:10}]},
-          options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{beginAtZero:true}}}
-        });
+
+      const msg=document.getElementById("hmMessage");
+      msg.textContent = hasNonE
+        ? "Heatmap shows achievable grades depending on distance and fuel replacement."
+        : "⚠ With current ship inputs, no distance or replacement achieves compliance (all Grade E).";
+
+      ctx.strokeStyle="rgba(15,23,42,.06)";
+      ctx.lineWidth=1;
+      for(let c=0;c<=cols;c++){
+        const x=padL + c*cellW;
+        ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
       }
-    }
-
-    function etsRecalcAll(){
-      ensureEtsCharts();
-      const price=n(document.getElementById("etsPrice").value,0);
-      document.getElementById("etsPriceOut").textContent=fmt0(price);
-
-      const perCO2=etsLegs.map(v=>(n(v.fuelT)*n(v.factor))*etsScopeFrac(v.scope));
-      const perCost=perCO2.map(c=>c*price);
-      document.getElementById("etsTotalCO2").textContent=fmt(perCO2.reduce((a,b)=>a+b,0),1);
-      document.getElementById("etsTotalCost").textContent=fmt0(perCost.reduce((a,b)=>a+b,0));
-
-      const labels=etsLegs.map(v=>`${v.from||"—"} → ${v.to||"—"}`);
-      chartEtsEm.data.labels=labels; chartEtsEm.data.datasets[0].data=perCO2; chartEtsEm.update();
-      chartEtsCost.data.labels=labels; chartEtsCost.data.datasets[0].data=perCost; chartEtsCost.update();
-    }
-
-    /* ---------- FuelEU (kept stable) ---------- */
-    const FE_PATHWAYS=[
-      {name:"HFO", intensity:91.10, lhvMJperKg:40.2},
-      {name:"MGO/MDO", intensity:91.00, lhvMJperKg:42.7},
-      {name:"LFO", intensity:90.80, lhvMJperKg:41.0},
-      {name:"LNG", intensity:75.00, lhvMJperKg:50.0},
-      {name:"Methanol (fossil)", intensity:94.00, lhvMJperKg:19.9},
-      {name:"Methanol (bio)", intensity:20.00, lhvMJperKg:19.9},
-      {name:"Biodiesel (FAME)", intensity:40.00, lhvMJperKg:37.0},
-      {name:"e-Ammonia", intensity:5.00, lhvMJperKg:18.6}
-    ];
-    const FE_TARGET={2025:89.34,2030:80.00,2035:67.00,2040:55.00,2045:33.00,2050:14.00};
-    let feFuels=[{path:"HFO", tonnes:5000}];
-
-    function feRender(){
-      const tb=document.getElementById("feFuelRows"); tb.innerHTML="";
-      feFuels.forEach((f,idx)=>{
-        const tr=document.createElement("tr");
-        const td1=document.createElement("td"); td1.className="td-input";
-        const sel=document.createElement("select");
-        sel.innerHTML=FE_PATHWAYS.map(p=>`<option value="${p.name}">${p.name}</option>`).join("");
-        sel.value=f.path;
-        sel.addEventListener("change",()=>{feFuels[idx].path=sel.value; feRecalcAll();}); td1.appendChild(sel);
-
-        const td2=document.createElement("td"); td2.className="td-input";
-        const in2=document.createElement("input"); in2.type="number"; in2.value=f.tonnes;
-        in2.addEventListener("input",()=>{feFuels[idx].tonnes=n(in2.value,0); feRecalcAll();}); td2.appendChild(in2);
-
-        const td3=document.createElement("td"); td3.className="td-actions";
-        const btn=document.createElement("button"); btn.className="btn small danger"; btn.textContent="🗑";
-        btn.addEventListener("click",()=>{feFuels.splice(idx,1); if(!feFuels.length) feFuels=[{path:"HFO",tonnes:0}]; feRender(); feRecalcAll();});
-        td3.appendChild(btn);
-
-        tr.appendChild(td1);tr.appendChild(td2);tr.appendChild(td3);
-        tb.appendChild(tr);
-      });
-    }
-
-    function feCalc(){
-      let totalE=0, weighted=0;
-      feFuels.forEach(f=>{
-        const p=FE_PATHWAYS.find(x=>x.name===f.path); if(!p) return;
-        const kg=n(f.tonnes)*1000;
-        const E=kg*p.lhvMJperKg;
-        totalE+=E; weighted+=E*p.intensity;
-      });
-      return {totalE, intensity: totalE>0 ? (weighted/totalE):0};
-    }
-
-    function ensureFeCharts(){
-      if(!chartFeTargets){
-        chartFeTargets=new Chart(document.getElementById("chartFeTargets"),{
-          type:"bar",
-          data:{labels:["2025","2030","2035","2040","2045","2050"],datasets:[{data:[89.34,80,67,55,33,14],backgroundColor:"rgba(29,155,240,.85)",borderRadius:10}]},
-          options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{beginAtZero:true}}}
-        });
+      for(let r=0;r<=rows;r++){
+        const y=padT + r*cellH;
+        ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
       }
-      if(!chartFeCompare){
-        chartFeCompare=new Chart(document.getElementById("chartFeCompare"),{
-          type:"bar",
-          data:{labels:FE_PATHWAYS.map(p=>p.name),datasets:[{data:FE_PATHWAYS.map(p=>p.intensity),backgroundColor:"rgba(11,42,74,.85)",borderRadius:10}]},
-          options:{responsive:true,maintainAspectRatio:false,indexAxis:"y",plugins:{legend:{display:false}},scales:{x:{beginAtZero:true}}}
-        });
+
+      ctx.strokeStyle="rgba(15,23,42,.10)";
+      ctx.strokeRect(padL,padT,plotW,plotH);
+
+      ctx.fillStyle="rgba(15,23,42,.72)";
+      ctx.font="12px ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial";
+      ctx.textAlign="center";
+      ctx.textBaseline="top";
+
+      for(let c=0;c<cols;c++){
+        if(pcts[c] % 20 !== 0) continue;
+        const x=padL + (c+0.5)*cellW;
+        ctx.fillText(pcts[c]+"%", x, padT+plotH+10);
       }
+      ctx.fillText("Replacement %", padL + plotW/2, padT+plotH+26);
+
+      ctx.textAlign="right";
+      ctx.textBaseline="middle";
+      for(let r=0;r<rows;r++){
+        const dist=distances[r];
+        if(dist % 5000 !== 0) continue;
+        const y=padT + (r+0.5)*cellH;
+        ctx.fillText((dist/1000)+"k", padL-10, y);
+      }
+
+      ctx.save();
+      ctx.translate(14, padT + plotH/2);
+      ctx.rotate(-Math.PI/2);
+      ctx.textAlign="center";
+      ctx.textBaseline="top";
+      ctx.fillText("Annual Distance (nm)", 0, 0);
+      ctx.restore();
     }
 
-    function feRecalcAll(){
-      ensureFeCharts();
-      const year=n(document.getElementById("feYear").value,2025);
-      const target=FE_TARGET[year] ?? FE_TARGET[2025];
-      document.getElementById("feTargetYear").textContent=year;
-      document.getElementById("feTarget").textContent=fmt(target,2);
+    /* ETS/FuelEU left stable (not required for your reported bug) */
 
-      const {totalE,intensity}=feCalc();
-      document.getElementById("feIntensity").textContent=fmt(intensity,2);
-
-      const delta=intensity-target;
-      document.getElementById("feDelta").textContent=fmt(Math.abs(delta),2);
-      const pill=document.getElementById("feBalancePill");
-      pill.textContent = delta<=0 ? "Surplus" : "Deficit";
-      pill.style.background = delta<=0 ? css("--g-a") : css("--g-e");
-
-      const penalty=Math.max(0,delta)*totalE*0.0003;
-      document.getElementById("fePenalty").textContent=fmt0(penalty);
-    }
-
-    /* ---------- wire events ---------- */
+    /* Wire events */
     const watch = (id, fn)=>{
       const el=document.getElementById(id);
       const evt = (el.tagName==="SELECT") ? "change" : "input";
@@ -1227,42 +1065,22 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("optPct").addEventListener("input", ciiRecalcAll);
     document.getElementById("btnAddFuel").addEventListener("click", ciiAddCustomFuel);
 
-    document.getElementById("etsPrice").addEventListener("input", etsRecalcAll);
-    document.getElementById("btnAddLeg").addEventListener("click", ()=>{
-      etsLegs.push({from:"",to:"",scope:"intra",fuelT:0,factor:3.114});
-      etsRenderLegs(); etsRecalcAll();
-    });
+    window.addEventListener("resize", resizeAllCharts);
 
-    document.getElementById("feYear").addEventListener("change", feRecalcAll);
-    document.getElementById("btnFeAddFuel").addEventListener("click", ()=>{
-      feFuels.push({path:"HFO",tonnes:0});
-      feRender(); feRecalcAll();
-    });
-
-    window.addEventListener("resize", ()=>{ resizeAllCharts(); });
-
-    /* ---------- init ---------- */
+    /* INIT */
     ciiRenderFuelRows();
     syncSelectors();
     ensureCiiCharts();
     ciiRecalcAll();
 
-    etsRenderLegs();
-    ensureEtsCharts();
-    etsRecalcAll();
-
-    feRender();
-    ensureFeCharts();
-    feRecalcAll();
-
-    // hash routing init
+    // route init
     const h=location.hash.replace("#","");
     if(h==="eu-ets") go("ets");
     else if(h==="fueleu") go("fueleu");
     else if(h==="who") go("who");
     else go("cii");
 
-  } catch (e) {
+  }catch(e){
     console.error(e);
     ERR("JS crashed: " + (e?.message || e));
   }

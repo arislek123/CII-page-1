@@ -28,6 +28,12 @@
       --g-c:#f59e0b;
       --g-d:#f97316;
       --g-e:#ef4444;
+
+      --zone-a: rgba(22,163,74,.14);
+      --zone-b: rgba(34,197,94,.12);
+      --zone-c: rgba(245,158,11,.12);
+      --zone-d: rgba(249,115,22,.12);
+      --zone-e: rgba(239,68,68,.14);
     }
     *{box-sizing:border-box}
     body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--text)}
@@ -44,7 +50,7 @@
     .tab.active{background:rgba(255,255,255,.14);color:#fff}
 
     h1{font-size:34px;margin:12px 0 6px}
-    .subtitle{color:var(--muted);margin:0 0 18px}
+    .subtitle{color:var(--muted);margin:0 0 18px;line-height:1.35}
 
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
     .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
@@ -58,13 +64,13 @@
 
     .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
     @media(max-width:520px){.row{grid-template-columns:1fr}}
-    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:700}
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:800}
     input,select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #dbe6f3;outline:none;font-size:13px;background:#fff}
     input:focus,select:focus{border-color:rgba(16,52,87,.55);box-shadow:0 0 0 4px rgba(16,52,87,.12)}
     .hint{font-size:12px;color:var(--muted);margin-top:8px}
 
     .kpi{text-align:center;padding:18px 12px}
-    .kpi .k{font-size:12px;color:var(--muted);font-weight:700}
+    .kpi .k{font-size:12px;color:var(--muted);font-weight:800}
     .kpi .v{font-size:30px;font-weight:900;margin-top:6px}
 
     .rating-pill{
@@ -74,19 +80,19 @@
       background:var(--g-e);
     }
 
-    .btn{border:1px solid var(--border);background:#fff;border-radius:12px;padding:10px 12px;font-weight:800;font-size:13px;cursor:pointer;transition:.12s;user-select:none}
+    .btn{border:1px solid var(--border);background:#fff;border-radius:12px;padding:10px 12px;font-weight:900;font-size:13px;cursor:pointer;transition:.12s;user-select:none}
     .btn:hover{transform:translateY(-1px);box-shadow:0 10px 30px rgba(16,52,87,.10)}
     .btn.primary{background:var(--navy2);border-color:var(--navy2);color:#fff}
     .btn.small{padding:8px 10px;border-radius:10px;font-size:12px}
     .btn.danger{background:#fff;border-color:#ffd1d1;color:#b91c1c}
 
     table{width:100%;border-collapse:separate;border-spacing:0 10px;font-size:13px}
-    th{color:var(--muted);text-align:left;font-size:12px;padding:0 10px}
+    th{color:var(--muted);text-align:left;font-size:12px;padding:0 10px;font-weight:900}
     td{padding:10px;background:#fff;border:1px solid var(--border)}
     td:first-child{border-radius:12px 0 0 12px}
     td:last-child{border-radius:0 12px 12px 0}
     .td-input{padding:6px 8px}
-    .td-input input,.td-input select{padding:8px 10px;border-radius:10px}
+    .td-input input, .td-input select{padding:8px 10px;border-radius:10px}
     .td-actions{display:flex;gap:8px;align-items:center;justify-content:flex-end}
 
     .section{display:none}
@@ -103,9 +109,52 @@
     @media(max-width:980px){.team-grid{grid-template-columns:1fr}}
     .avatar{width:80px;height:80px;border-radius:999px;background:var(--navy2);color:#fff;display:grid;place-items:center;font-weight:900;font-size:22px;margin:10px auto 12px}
     .who-card h4{margin:0;text-align:center;font-size:18px}
-    .who-card .role{margin-top:6px;text-align:center;font-size:13px;color:#2563eb;font-weight:800}
+    .who-card .role{margin-top:6px;text-align:center;font-size:13px;color:#2563eb;font-weight:900}
     .who-card p{margin:12px 0 0;color:#6b7a90;font-size:13px;line-height:1.5}
     .center{text-align:center}
+
+    /* Action KPI */
+    .action-kpi{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:16px;
+    }
+    @media(max-width:980px){.action-kpi{grid-template-columns:1fr}}
+    .targets{
+      padding:14px;
+      border:1px solid var(--border);
+      border-radius:16px;
+      background:linear-gradient(180deg,#fff, #fbfdff);
+    }
+    .targets h4{margin:0 0 10px;font-size:14px}
+    .targets .line{display:flex;gap:10px;align-items:flex-start;margin:10px 0}
+    .badge{
+      min-width:28px;height:28px;border-radius:999px;display:grid;place-items:center;color:#fff;font-weight:900;font-size:12px;
+    }
+    .targets .txt{font-size:13px;color:#203047;line-height:1.35}
+    .muted{color:var(--muted)}
+    .mini{
+      font-size:12px;color:var(--muted);margin-top:6px
+    }
+
+    /* Envelope */
+    .envelope-wrap{
+      height:360px;
+      position:relative;
+    }
+    #ciiEnvelope{
+      width:100%;
+      height:100%;
+      display:block;
+      border-radius:14px;
+      background:#fff;
+      border:1px solid var(--border);
+    }
+    .legend{
+      display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:10px;font-weight:900;font-size:12px;color:var(--muted)
+    }
+    .leg-item{display:flex;align-items:center;gap:8px}
+    .sw{width:14px;height:10px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
   </style>
 </head>
 <body>
@@ -197,16 +246,19 @@
             <tbody id="ciiFuelRows"></tbody>
           </table>
 
-          <!-- ✅ NEW: dropdown for regulation fuels + auto-fill CF -->
+          <!-- Add new fuel: preset dropdown -> auto-fill name + factor (editable) -->
           <div class="flex space-between" style="margin-top:6px">
             <div class="flex" style="flex:1">
-              <select id="ciiNewFuelPreset"></select>
+              <select id="ciiNewFuelPreset" style="max-width:200px">
+                <option value="" selected>Select fuel…</option>
+              </select>
+              <input id="ciiNewFuelName" placeholder="Fuel name" />
               <input id="ciiNewFuelFactor" type="number" step="0.001" placeholder="t CO₂/t" />
               <input id="ciiNewFuelTonnes" type="number" step="1" placeholder="tonnes" />
             </div>
             <button class="btn" onclick="ciiAddCustomFuel()">＋ Add Fuel</button>
           </div>
-          <div class="hint">Pick a fuel from the list to auto-fill its CO₂ factor. You can still edit the factor before adding.</div>
+          <div class="mini">Pick a fuel from the dropdown to auto-fill the IMO CF factor (you can still edit it).</div>
         </div>
       </div>
 
@@ -232,6 +284,23 @@
         </div>
       </div>
 
+      <!-- Actionable targets KPI -->
+      <div class="card" style="margin-top:18px">
+        <h3><span class="icon">🎯</span> Actionable Targets</h3>
+        <div class="action-kpi">
+          <div class="targets">
+            <h4>What it takes to reach better grades (fuels fixed OR distance fixed)</h4>
+            <div id="ciiTargets"></div>
+            <div class="mini">Math uses the same AER formula as the main CII calculation and the IMO rating bands.</div>
+          </div>
+          <div class="targets">
+            <h4>Quick KPI (recommended)</h4>
+            <div class="txt" id="ciiKpiOne"></div>
+            <div class="mini">This KPI updates automatically when you change fuel, distance, DWT, year, or CF.</div>
+          </div>
+        </div>
+      </div>
+
       <div class="grid-2" style="margin-top:18px">
         <div class="card">
           <h3>Attained vs Required CII — Rating Bands</h3>
@@ -247,7 +316,7 @@
         <div class="card">
           <h3>CII Grade vs Distance</h3>
           <div class="chart-wrap"><canvas id="chartCiiDistance"></canvas></div>
-          <div class="hint">Fuels fixed. Distance auto-expands until grade thresholds (E→D→C→B→A) are visible.</div>
+          <div class="hint">Fuels fixed. Distance is swept automatically so grade steps (A→E) are clearly visible.</div>
         </div>
 
         <div class="card">
@@ -296,7 +365,7 @@
         <div class="card">
           <h3>Multi-Year CII Trend (2023–2030)</h3>
           <div class="chart-wrap"><canvas id="chartCiiTrend"></canvas></div>
-          <div class="hint">Trend uses a “stringency index” (higher = stricter), so it increases year-by-year.</div>
+          <div class="hint">This plot uses a “stringency index” (higher = stricter), so it increases year-by-year.</div>
         </div>
         <div class="card">
           <h3>Fuel Mix Breakdown</h3>
@@ -307,7 +376,26 @@
       <div class="card" style="margin-top:18px">
         <h3>CII Rating Projection</h3>
         <div class="chart-wrap"><canvas id="chartCiiProjection"></canvas></div>
+        <div class="hint">Y-axis shows the grade (A–E) and updates as required CII becomes stricter each year.</div>
       </div>
+
+      <!-- NEW: Compliance Operating Envelope (2D heatmap) AFTER ALL CHARTS -->
+      <div class="card" style="margin-top:18px">
+        <h3><span class="icon">🗺️</span> CII Compliance Operating Envelope (Fuel vs Distance)</h3>
+        <div class="envelope-wrap">
+          <canvas id="ciiEnvelope"></canvas>
+        </div>
+        <div class="legend">
+          <div class="leg-item"><span class="sw" style="background:var(--zone-a)"></span> A</div>
+          <div class="leg-item"><span class="sw" style="background:var(--zone-b)"></span> B</div>
+          <div class="leg-item"><span class="sw" style="background:var(--zone-c)"></span> C</div>
+          <div class="leg-item"><span class="sw" style="background:var(--zone-d)"></span> D</div>
+          <div class="leg-item"><span class="sw" style="background:var(--zone-e)"></span> E</div>
+          <div class="leg-item"><span class="sw" style="background:#111827"></span> ● Current point</div>
+        </div>
+        <div class="hint">Heatmap shows which grade you get for different distances and total fuel levels (same fuel mix, scaled up/down).</div>
+      </div>
+
     </section>
 
     <!-- EU ETS -->
@@ -418,18 +506,18 @@
             <div class="kpi">
               <div class="k">GHG Intensity</div>
               <div class="v"><span id="feIntensity">0</span></div>
-              <div class="muted" style="font-size:12px; font-weight:800">gCO₂eq/MJ</div>
+              <div class="muted" style="font-size:12px; font-weight:900">gCO₂eq/MJ</div>
             </div>
             <div class="kpi">
               <div class="k">Target (<span id="feTargetYear">2025</span>)</div>
               <div class="v"><span id="feTarget">0</span></div>
-              <div class="muted" style="font-size:12px; font-weight:800">gCO₂eq/MJ</div>
+              <div class="muted" style="font-size:12px; font-weight:900">gCO₂eq/MJ</div>
             </div>
 
             <div class="kpi">
               <div class="k">Compliance Balance</div>
               <div class="rating-pill" id="feBalancePill" style="background:var(--g-e)">Deficit</div>
-              <div class="muted" style="font-size:12px; font-weight:800"><span id="feDelta">0</span> gCO₂eq/MJ</div>
+              <div class="muted" style="font-size:12px; font-weight:900"><span id="feDelta">0</span> gCO₂eq/MJ</div>
             </div>
             <div class="kpi">
               <div class="k">Est. Penalty</div>
@@ -519,6 +607,9 @@ function n(x,d=0){const v=Number(x);return Number.isFinite(v)?v:d;}
 function fmt(x,digits=4){return Number.isFinite(x)?x.toFixed(digits):"0";}
 function fmt0(x){return Number.isFinite(x)?Math.round(x).toString():"0";}
 function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+function clamp(x,a,b){return Math.max(a, Math.min(b,x));}
+function gradeToScore(g){return ({A:1,B:2,C:3,D:4,E:5}[g] ?? 5);}
+function scoreToGrade(s){return ({1:"A",2:"B",3:"C",4:"D",5:"E"}[Math.round(s)] ?? "E");}
 
 /* COLORS */
 const BASE_FUEL_COLORS = {"HFO":css("--c-hfo"),"MGO/MDO":css("--c-mgo"),"LFO":css("--c-lfo"),"LNG":"#F59E0B","Methanol":"#7C3AED","Biodiesel (FAME)":"#64748B"};
@@ -531,24 +622,19 @@ function gradeColor(g){
   if(g==="D") return css("--g-d");
   return css("--g-e");
 }
+function zoneColor(g){
+  if(g==="A") return css("--zone-a");
+  if(g==="B") return css("--zone-b");
+  if(g==="C") return css("--zone-c");
+  if(g==="D") return css("--zone-d");
+  return css("--zone-e");
+}
 
-/* ✅ REGULATION FUEL LIST (presets) */
-const REG_FUELS = [
-  {name:"HFO", factor:3.114},
-  {name:"MGO/MDO", factor:3.206},
-  {name:"LFO", factor:3.151},
-  {name:"LNG", factor:2.750},
-  {name:"Methanol", factor:1.375},
-  {name:"Biodiesel (FAME)", factor:2.800},
-  {name:"LPG (Propane)", factor:3.000},
-  {name:"LPG (Butane)", factor:3.030},
-  {name:"Ethane", factor:2.930},
-  {name:"Ammonia (e-NH3)", factor:0.000},
-  {name:"Hydrogen (e-H2)", factor:0.000},
-  {name:"Other / Custom", factor:""}
-];
-
-/* CII (AER) */
+/* ===== CII (AER) =====
+   - Required CII reference line: a * DWT^-c
+   - Year reduction factor Z (stricter over time): required = ref * (1 - Z)
+   - Attained AER: CO2[g] / (DWT * distance[nm]) * correction
+*/
 const CII_COEFF={
   bulk_carrier:{a:4745,c:0.622},
   tanker:{a:5247,c:0.610},
@@ -559,10 +645,16 @@ const CII_COEFF={
   ro_ro_cargo:{a:1975,c:0.529}
 };
 const CII_Z={2023:0.05,2024:0.07,2025:0.09,2026:0.11,2027:0.13,2028:0.15,2029:0.17,2030:0.19};
-const CII_D={d1:-0.387,d2:-0.172,d3:0.000,d4:0.172};
+const CII_D={d1:-0.387,d2:-0.172,d3:0.000,d4:0.172}; // IMO rating band offsets (log domain)
 
 function ratingBands(req){
-  return {A:req*Math.exp(CII_D.d1),B:req*Math.exp(CII_D.d2),C:req*Math.exp(CII_D.d3),D:req*Math.exp(CII_D.d4),E:Infinity};
+  return {
+    A:req*Math.exp(CII_D.d1),
+    B:req*Math.exp(CII_D.d2),
+    C:req*Math.exp(CII_D.d3),
+    D:req*Math.exp(CII_D.d4),
+    E:Infinity
+  };
 }
 function gradeFromAtt(att, req){
   const b=ratingBands(req);
@@ -573,8 +665,15 @@ function gradeFromAtt(att, req){
   return "E";
 }
 
-/* (for optimizer fallback) */
-const FUEL_FACTORS={"HFO":3.114,"MGO/MDO":3.206,"LFO":3.151,"LNG":2.750,"Methanol":1.375,"Biodiesel (FAME)":2.800};
+/* Default CF factors (edit allowed) */
+const FUEL_FACTORS={
+  "HFO":3.114,
+  "MGO/MDO":3.206,
+  "LFO":3.151,
+  "LNG":2.750,
+  "Methanol":1.375,
+  "Biodiesel (FAME)":2.800
+};
 
 let ciiFuels=[
   {name:"HFO", factor:FUEL_FACTORS["HFO"], t:2000},
@@ -582,6 +681,30 @@ let ciiFuels=[
   {name:"LFO", factor:FUEL_FACTORS["LFO"], t:4000}
 ];
 
+function ciiTotalCO2(){return ciiFuels.reduce((s,f)=>s + (n(f.t)*n(f.factor)),0);}
+function ciiTotalFuelT(){return ciiFuels.reduce((s,f)=>s + n(f.t),0);}
+
+function ciiRequiredAER(year, type, cap){
+  const coeff=CII_COEFF[type] || CII_COEFF.bulk_carrier;
+  const ref=coeff.a * Math.pow(cap, -coeff.c);
+  const Z=(CII_Z[year] ?? CII_Z[2025]);
+  return ref * (1 - Z);
+}
+function ciiAttainedAER(totalCO2_t){
+  const cap=Math.max(1, n(document.getElementById("ciiCapacity").value, 1));
+  const dist=Math.max(1, n(document.getElementById("ciiDistance").value, 1));
+  const corr=Math.max(0, n(document.getElementById("ciiCorr").value, 1));
+  const grams=totalCO2_t*1e6;
+  return (grams/(cap*dist))*corr;
+}
+function ciiAttainedAER_at(distNm, totalCO2_t){
+  const cap=Math.max(1, n(document.getElementById("ciiCapacity").value, 1));
+  const corr=Math.max(0, n(document.getElementById("ciiCorr").value, 1));
+  const grams=totalCO2_t*1e6;
+  return (grams/(cap*Math.max(1,distNm)))*corr;
+}
+
+/* Fuel rows */
 function ciiRenderFuelRows(){
   const tb=document.getElementById("ciiFuelRows");
   tb.innerHTML="";
@@ -605,7 +728,10 @@ function ciiRenderFuelRows(){
 
     const tdAct=document.createElement("td"); tdAct.className="td-actions";
     const btn=document.createElement("button"); btn.className="btn small danger"; btn.textContent="🗑";
-    btn.addEventListener("click", ()=>{ciiFuels.splice(idx,1); ciiRenderFuelRows(); ciiUpdateOptFrom(); ciiRecalcAll();});
+    btn.addEventListener("click", ()=>{
+      ciiFuels.splice(idx,1);
+      ciiRenderFuelRows(); ciiUpdateOptFrom(); ciiRecalcAll();
+    });
     tdAct.appendChild(btn);
 
     tr.appendChild(tdFuel); tr.appendChild(tdFactor); tr.appendChild(tdT); tr.appendChild(tdAct);
@@ -626,63 +752,50 @@ function ciiUpdateOptFrom(){
   else sel.value=ciiFuels[0]?.name || "";
 }
 
-/* ✅ NEW: preset dropdown wiring */
-function ciiInitFuelPresets(){
-  const presetSel = document.getElementById("ciiNewFuelPreset");
-  presetSel.innerHTML = REG_FUELS.map(f => `<option value="${f.name}">${f.name}</option>`).join("");
-  presetSel.value = "LNG"; // default
-
-  function applyPreset(){
-    const chosen = presetSel.value;
-    const preset = REG_FUELS.find(x=>x.name===chosen);
-    if(!preset) return;
-
-    // Auto-fill factor, but allow user to edit after
-    const factorInput = document.getElementById("ciiNewFuelFactor");
-    if(preset.factor === "") factorInput.value = "";
-    else factorInput.value = String(preset.factor);
-  }
-
-  presetSel.addEventListener("change", applyPreset);
-  applyPreset(); // initial fill
+function ciiFillPresetDropdown(){
+  const sel=document.getElementById("ciiNewFuelPreset");
+  sel.innerHTML = `<option value="" selected>Select fuel…</option>` + Object.keys(FUEL_FACTORS)
+    .map(k=>`<option value="${k}">${k}</option>`).join("") + `<option value="__custom__">Custom</option>`;
 }
 
-/* ✅ UPDATED: add fuel uses dropdown name + user-editable factor */
+function ciiPresetChanged(){
+  const preset=document.getElementById("ciiNewFuelPreset").value;
+  const nameEl=document.getElementById("ciiNewFuelName");
+  const factorEl=document.getElementById("ciiNewFuelFactor");
+
+  if(!preset){
+    return;
+  }
+  if(preset==="__custom__"){
+    nameEl.value="";
+    factorEl.value="";
+    nameEl.focus();
+    return;
+  }
+  nameEl.value=preset;
+  factorEl.value=String(FUEL_FACTORS[preset] ?? "");
+  document.getElementById("ciiNewFuelTonnes").focus();
+}
+
 function ciiAddCustomFuel(){
-  const presetName = document.getElementById("ciiNewFuelPreset").value;
-  const name = (presetName === "Other / Custom")
-    ? prompt("Enter custom fuel name:", "Custom Fuel")?.trim()
-    : presetName;
-
-  if(!name) return;
-
+  const name=document.getElementById("ciiNewFuelName").value.trim();
   const factor=n(document.getElementById("ciiNewFuelFactor").value, NaN);
   const tonnes=n(document.getElementById("ciiNewFuelTonnes").value, NaN);
-  if(!Number.isFinite(factor) || !Number.isFinite(tonnes)) return;
+  if(!name || !Number.isFinite(factor) || !Number.isFinite(tonnes)) return;
 
   ciiFuels.push({name, factor, t: tonnes});
 
+  document.getElementById("ciiNewFuelPreset").value="";
+  document.getElementById("ciiNewFuelName").value="";
+  document.getElementById("ciiNewFuelFactor").value="";
   document.getElementById("ciiNewFuelTonnes").value="";
-  // keep factor as-is (handy for repetitive adds)
+
   ciiRenderFuelRows();
   ciiUpdateOptFrom();
   ciiRecalcAll();
 }
 
-function ciiTotalCO2(){return ciiFuels.reduce((s,f)=>s + (n(f.t)*n(f.factor)),0);}
-function ciiRequiredAER(year, type, cap){
-  const coeff=CII_COEFF[type] || CII_COEFF.bulk_carrier;
-  const ref=coeff.a * Math.pow(cap, -coeff.c);
-  const Z=(CII_Z[year] ?? CII_Z[2025]);
-  return ref * (1 - Z);
-}
-function ciiAttainedAER(totalCO2_t){
-  const cap=Math.max(1, n(document.getElementById("ciiCapacity").value, 1));
-  const dist=Math.max(1, n(document.getElementById("ciiDistance").value, 1));
-  const corr=Math.max(0, n(document.getElementById("ciiCorr").value, 1));
-  const grams=totalCO2_t*1e6;
-  return (grams/(cap*dist))*corr;
-}
+/* Optimizer */
 function ciiOptimizer(baseCO2){
   const from=document.getElementById("optFromFuel").value;
   const to=document.getElementById("optToFuel").value;
@@ -738,6 +851,7 @@ function ensureCiiCharts(){
       options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}},cutout:"58%"}
     });
   }
+
   if(!chartCiiDistance){
     chartCiiDistance = new Chart(document.getElementById("chartCiiDistance"), {
       type:"line",
@@ -745,25 +859,35 @@ function ensureCiiCharts(){
         label:"Grade (A–E)",
         data:[],
         stepped:true,
-        tension:0,
         borderColor:css("--c-mgo"),
-        backgroundColor:"rgba(29,155,240,.12)",
-        pointRadius:2,
+        backgroundColor:"rgba(29,155,240,.10)",
+        pointRadius:0,
         fill:true
       }]},
       options:{
         responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{display:false}},
+        plugins:{
+          legend:{display:false},
+          tooltip:{
+            callbacks:{
+              label:(ctx)=>`Grade: ${scoreToGrade(ctx.parsed.y)}`
+            }
+          }
+        },
         scales:{
           x:{grid:{display:false}},
           y:{
-            min:1,max:5,reverse:true,
-            ticks:{stepSize:1,callback:(v)=>({1:"A",2:"B",3:"C",4:"D",5:"E"}[v]||"")}
+            min:0.5,max:5.5,reverse:true,
+            ticks:{
+              stepSize:1,
+              callback:(v)=>({1:"A",2:"B",3:"C",4:"D",5:"E"}[v]||"")
+            }
           }
         }
       }
     });
   }
+
   if(!chartCiiTrend){
     chartCiiTrend = new Chart(document.getElementById("chartCiiTrend"), {
       type:"line",
@@ -777,13 +901,28 @@ function ensureCiiCharts(){
       options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}},scales:{x:{grid:{display:false}},y:{beginAtZero:true}}}
     });
   }
+
   if(!chartCiiProjection){
     chartCiiProjection = new Chart(document.getElementById("chartCiiProjection"), {
       type:"bar",
       data:{labels:["2023","2024","2025","2026","2027","2028","2029","2030"],datasets:[{label:"Rating (A–E)",data:[],backgroundColor:"rgba(239,68,68,.75)",borderRadius:10}]},
       options:{
-        responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-        scales:{x:{grid:{display:false}},y:{min:0.5,max:5.5,ticks:{stepSize:1,callback:(v)=>({1:"A",2:"B",3:"C",4:"D",5:"E"}[v]||"")}}}
+        responsive:true,maintainAspectRatio:false,
+        plugins:{
+          legend:{display:false},
+          tooltip:{
+            callbacks:{
+              label:(ctx)=>`Rating: ${scoreToGrade(ctx.parsed.y)}`
+            }
+          }
+        },
+        scales:{
+          x:{grid:{display:false}},
+          y:{
+            min:0.5,max:5.5,reverse:true,
+            ticks:{stepSize:1,callback:(v)=>({1:"A",2:"B",3:"C",4:"D",5:"E"}[v]||"")}
+          }
+        }
       }
     });
   }
@@ -793,7 +932,7 @@ function ciiUpdateCharts(reqAER, attAER, totalCO2){
   ensureCiiCharts();
 
   const b=ratingBands(reqAER);
-  chartCiiBands.data.datasets[0].data=[b.A,b.B,b.C,b.D,Math.max(b.D*1.2,reqAER*1.4)];
+  chartCiiBands.data.datasets[0].data=[b.A,b.B,b.C,b.D,Math.max(b.D*1.25,reqAER*1.6)];
   chartCiiBands.options.plugins.title={display:true,text:`Required: ${fmt(reqAER,4)} | Attained: ${fmt(attAER,4)}`};
   chartCiiBands.update();
 
@@ -811,48 +950,268 @@ function ciiUpdateCharts(reqAER, attAER, totalCO2){
   chartCiiFuelDonut.data.datasets[0].backgroundColor=colors;
   chartCiiFuelDonut.update();
 
-  const cap = Math.max(1, n(document.getElementById("ciiCapacity").value, 1));
-  const corr = Math.max(0, n(document.getElementById("ciiCorr").value, 1));
-  const baseGrams = totalCO2 * 1e6;
+  /* ===== Grade vs Distance (VISIBLE STEPS) =====
+     Use a log-spaced distance sweep centered around grade-boundary distances.
+  */
+  const cap=Math.max(1, n(document.getElementById("ciiCapacity").value, 1));
+  const corr=Math.max(0, n(document.getElementById("ciiCorr").value, 1));
+  const grams=totalCO2*1e6;
 
-  function distFor(aer){
-    return (baseGrams * corr) / (cap * Math.max(aer, 1e-9));
-  }
-  const dToA = distFor(b.A);
+  const bands=ratingBands(reqAER);
+  // boundary distances where attained equals each band limit
+  const distA = (grams*corr)/(cap*bands.A);
+  const distB = (grams*corr)/(cap*bands.B);
+  const distC = (grams*corr)/(cap*bands.C);
+  const distD = (grams*corr)/(cap*bands.D);
 
-  let dMin = 2000;
-  let dMax = Math.max(25000, dToA * 1.15);
-  dMax = Math.min(dMax, 500000);
+  const minD = clamp(Math.min(distA,distB,distC,distD)*0.55, 1000, 150000);
+  const maxD = clamp(Math.max(distA,distB,distC,distD)*1.45, 3000, 250000);
 
-  let step = 5000;
-  if(dMax <= 60000) step = 2000;
-  if(dMax <= 30000) step = 1000;
-
+  const pts=60;
   const xs=[], ys=[];
-  for(let d=dMin; d<=dMax; d+=step){
-    xs.push(Math.round(d/1000) + "k");
-    const aer = (baseGrams/(cap*d))*corr;
-    const g = gradeFromAtt(aer, reqAER);
-    ys.push(({A:1,B:2,C:3,D:4,E:5}[g]||5));
+  const logMin=Math.log(minD);
+  const logMax=Math.log(maxD);
+  for(let i=0;i<pts;i++){
+    const t=i/(pts-1);
+    const d=Math.exp(logMin + t*(logMax-logMin));
+    const aer=(grams/(cap*d))*corr;
+    const g=gradeFromAtt(aer, reqAER);
+    xs.push(Math.round(d/1000)+"k");
+    ys.push(gradeToScore(g));
   }
   chartCiiDistance.data.labels=xs;
   chartCiiDistance.data.datasets[0].data=ys;
   chartCiiDistance.update();
 
+  /* Trend: stringency index rises because required gets stricter (lower AER allowed) */
   const years=[2023,2024,2025,2026,2027,2028,2029,2030];
   const type=document.getElementById("ciiShipType").value;
   const reqsAER=years.map(y=>ciiRequiredAER(y,type,cap));
-
-  const ref2023 = reqsAER[0];
-  chartCiiTrend.data.datasets[0].data=reqsAER.map(r => ref2023 / r);
-  chartCiiTrend.data.datasets[1].data=years.map(()=> ref2023 / attAER);
+  const ref2023=reqsAER[0];
+  const reqIndex=reqsAER.map(r=>ref2023/r);
+  const attIndex=years.map(()=>ref2023/attAER);
+  chartCiiTrend.data.datasets[0].data=reqIndex;
+  chartCiiTrend.data.datasets[1].data=attIndex;
   chartCiiTrend.update();
 
-  const score=(g)=>({A:1,B:2,C:3,D:4,E:5}[g]||5);
-  chartCiiProjection.data.datasets[0].data=reqsAER.map(r=>score(gradeFromAtt(attAER,r)));
+  /* Projection: grade per year vs required of each year */
+  const grades=reqsAER.map(r=>gradeFromAtt(attAER,r));
+  chartCiiProjection.data.datasets[0].data=grades.map(gradeToScore);
   chartCiiProjection.update();
 }
 
+/* ===== Actionable KPI targets ===== */
+function ciiComputeTargets(reqAER, attAER, totalCO2){
+  const cap=Math.max(1, n(document.getElementById("ciiCapacity").value, 1));
+  const dist=Math.max(1, n(document.getElementById("ciiDistance").value, 1));
+  const corr=Math.max(0, n(document.getElementById("ciiCorr").value, 1));
+  const grams=totalCO2*1e6;
+  const curGrade=gradeFromAtt(attAER, reqAER);
+  const b=ratingBands(reqAER);
+
+  // band upper limits for each grade
+  const limits={A:b.A,B:b.B,C:b.C,D:b.D};
+  const order=["A","B","C","D","E"];
+  const curIdx=order.indexOf(curGrade);
+
+  // helper: minimum distance for target grade (fuels fixed)
+  function minDistanceFor(limit){
+    const needed = (grams*corr)/(cap*limit);
+    return needed;
+  }
+
+  // helper: required CO2 reduction for target grade at current distance
+  function requiredReductionFor(limit){
+    const maxGrams = (limit*cap*dist)/Math.max(1e-9,corr);
+    const maxCO2_t = maxGrams/1e6;
+    const redFrac = 1 - (maxCO2_t/Math.max(1e-9,totalCO2));
+    return clamp(redFrac, 0, 0.9999);
+  }
+
+  const targetsEl=document.getElementById("ciiTargets");
+  targetsEl.innerHTML="";
+
+  const betterGrades = order.slice(0, curIdx); // grades better than current
+  if(betterGrades.length===0){
+    targetsEl.innerHTML = `<div class="txt"><span class="badge" style="background:${gradeColor(curGrade)}">✓</span> You are already at the best grade (A).</div>`;
+    document.getElementById("ciiKpiOne").innerHTML = `You’re already <b style="color:${gradeColor("A")}">Grade A</b>.`;
+    return;
+  }
+
+  // Build lines for each better grade
+  betterGrades.forEach(g=>{
+    const limit=limits[g];
+    const needDist = minDistanceFor(limit);
+    const red = requiredReductionFor(limit);
+
+    const line=document.createElement("div");
+    line.className="line";
+
+    const badge=document.createElement("div");
+    badge.className="badge";
+    badge.style.background=gradeColor(g);
+    badge.textContent=g;
+
+    const txt=document.createElement("div");
+    txt.className="txt";
+    txt.innerHTML = `
+      To reach <b style="color:${gradeColor(g)}">Grade ${g}</b>:
+      sail <b>≥ ${fmt0(needDist)} nm</b> (fuels fixed)
+      <span class="muted">OR</span>
+      reduce CO₂ / fuel by <b>${fmt(red*100,1)}%</b> (distance fixed).
+    `;
+
+    line.appendChild(badge);
+    line.appendChild(txt);
+    targetsEl.appendChild(line);
+  });
+
+  // KPI: recommend the next better grade (closest)
+  const nextGrade = betterGrades[betterGrades.length-1]; // e.g. if current D -> C
+  const limit=limits[nextGrade];
+  const needDist=minDistanceFor(limit);
+  const red=requiredReductionFor(limit);
+
+  document.getElementById("ciiKpiOne").innerHTML =
+    `Fastest improvement: target <b style="color:${gradeColor(nextGrade)}">Grade ${nextGrade}</b> — either sail <b>≥ ${fmt0(needDist)} nm</b> with the same fuels, or cut CO₂ / fuel by <b>${fmt(red*100,1)}%</b> at the same distance.`;
+}
+
+/* ===== Compliance Operating Envelope (2D heatmap) =====
+   X: Distance (nm)
+   Y: Total fuel (t) (same fuel mix, scaled)
+   Grade computed from resulting CO2 (scaled) + distance.
+*/
+function drawCiiEnvelope(reqAER){
+  const canvas=document.getElementById("ciiEnvelope");
+  if(!canvas) return;
+
+  // set actual pixel size to match CSS size
+  const rect=canvas.getBoundingClientRect();
+  const dpr=window.devicePixelRatio || 1;
+  canvas.width=Math.max(1, Math.floor(rect.width*dpr));
+  canvas.height=Math.max(1, Math.floor(rect.height*dpr));
+
+  const ctx=canvas.getContext("2d");
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,rect.width,rect.height);
+
+  const padL=58, padR=18, padT=18, padB=44;
+  const w=rect.width, h=rect.height;
+  const plotW=w-padL-padR;
+  const plotH=h-padT-padB;
+
+  const cap=Math.max(1, n(document.getElementById("ciiCapacity").value, 1));
+  const corr=Math.max(0, n(document.getElementById("ciiCorr").value, 1));
+
+  const baseCO2=ciiTotalCO2(); // t
+  const baseFuel=ciiTotalFuelT(); // t
+  const baseDist=Math.max(1, n(document.getElementById("ciiDistance").value, 1));
+
+  // distance domain (wide enough to see zones)
+  const xMin=3000;
+  const xMax=60000;
+
+  // fuel domain: scale 0.4x .. 1.6x of current total fuel
+  const yMin=baseFuel*0.4;
+  const yMax=Math.max(baseFuel*1.6, yMin+1);
+
+  function xToPx(x){return padL + ( (x-xMin)/(xMax-xMin) )*plotW;}
+  function yToPx(y){return padT + (1- ( (y-yMin)/(yMax-yMin) ))*plotH;}
+
+  // grid
+  const cols=36, rows=24;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const x0 = xMin + (c/cols)*(xMax-xMin);
+      const x1 = xMin + ((c+1)/cols)*(xMax-xMin);
+      const y0 = yMin + (r/rows)*(yMax-yMin);
+      const y1 = yMin + ((r+1)/rows)*(yMax-yMin);
+
+      // scale fuels by y/baseFuel
+      const scale = (baseFuel>0) ? ( ((y0+y1)/2)/baseFuel ) : 1;
+      const co2 = baseCO2 * scale; // t
+      const aer = ciiAttainedAER_at((x0+x1)/2, co2);
+      const g = gradeFromAtt(aer, reqAER);
+
+      ctx.fillStyle = zoneColor(g);
+      const px0 = xToPx(x0);
+      const px1 = xToPx(x1);
+      const py0 = yToPx(y1); // note y is inverted
+      const py1 = yToPx(y0);
+      ctx.fillRect(px0, py0, (px1-px0)+0.5, (py1-py0)+0.5);
+    }
+  }
+
+  // axes
+  ctx.strokeStyle="rgba(16,52,87,.18)";
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(padL, padT);
+  ctx.lineTo(padL, h-padB);
+  ctx.lineTo(w-padR, h-padB);
+  ctx.stroke();
+
+  // x ticks
+  ctx.fillStyle="rgba(15,23,42,.75)";
+  ctx.font="12px ui-sans-serif,system-ui";
+  ctx.textAlign="center";
+  ctx.textBaseline="top";
+  const xTicks=[5000,10000,20000,30000,40000,50000,60000];
+  xTicks.forEach(t=>{
+    const px=xToPx(t);
+    ctx.strokeStyle="rgba(16,52,87,.10)";
+    ctx.beginPath();
+    ctx.moveTo(px, padT);
+    ctx.lineTo(px, h-padB);
+    ctx.stroke();
+
+    ctx.fillText((t/1000)+"k", px, h-padB+8);
+  });
+  ctx.fillText("Annual Distance (nm)", padL + plotW/2, h-18);
+
+  // y ticks
+  ctx.textAlign="right";
+  ctx.textBaseline="middle";
+  const yTicks=[0.5,0.75,1.0,1.25,1.5].map(k=>baseFuel*k);
+  yTicks.forEach(t=>{
+    const py=yToPx(t);
+    ctx.strokeStyle="rgba(16,52,87,.10)";
+    ctx.beginPath();
+    ctx.moveTo(padL, py);
+    ctx.lineTo(w-padR, py);
+    ctx.stroke();
+
+    ctx.fillText(fmt0(t), padL-8, py);
+  });
+  // y label (rotated)
+  ctx.save();
+  ctx.translate(18, padT + plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign="center";
+  ctx.textBaseline="top";
+  ctx.fillText("Total Fuel (t)", 0, 0);
+  ctx.restore();
+
+  // plot current point
+  const pxCur=xToPx(clamp(baseDist, xMin, xMax));
+  const pyCur=yToPx(clamp(baseFuel, yMin, yMax));
+  ctx.fillStyle="#111827";
+  ctx.beginPath();
+  ctx.arc(pxCur, pyCur, 4.5, 0, Math.PI*2);
+  ctx.fill();
+  ctx.strokeStyle="#ffffff";
+  ctx.lineWidth=2;
+  ctx.stroke();
+
+  // point label
+  ctx.fillStyle="rgba(15,23,42,.85)";
+  ctx.font="12px ui-sans-serif,system-ui";
+  ctx.textAlign="left";
+  ctx.textBaseline="bottom";
+  ctx.fillText("Current", pxCur+8, pyCur-6);
+}
+
+/* Main recalc */
 function ciiRecalcAll(){
   const totalCO2 = ciiTotalCO2();
   const year=n(document.getElementById("ciiYear").value,2025);
@@ -871,6 +1230,7 @@ function ciiRecalcAll(){
   pill.textContent=grade;
   pill.style.background = gradeColor(grade);
 
+  // optimizer
   const opt=ciiOptimizer(totalCO2);
   const newAtt=ciiAttainedAER(opt.newCO2);
   const newGrade=gradeFromAtt(newAtt, reqAER);
@@ -882,9 +1242,11 @@ function ciiRecalcAll(){
   document.getElementById("optSaved").textContent = (opt.saved>=0? "-":"") + fmt(Math.abs(opt.saved),0) + " t";
 
   ciiUpdateCharts(reqAER, attAER, totalCO2);
+  ciiComputeTargets(reqAER, attAER, totalCO2);
+  drawCiiEnvelope(reqAER);
 }
 
-/* ETS */
+/* ===== ETS ===== */
 let etsLegs=[{from:"Rotterdam",to:"Hamburg",scope:"intra",fuelT:500,factor:3.114}];
 function etsScopeFrac(s){if(s==="intra")return 1; if(s==="extra")return .5; if(s==="berth")return 1; return 1;}
 function etsRenderLegs(){
@@ -923,7 +1285,6 @@ function etsRenderLegs(){
   });
 }
 function etsAddLeg(){etsLegs.push({from:"",to:"",scope:"intra",fuelT:0,factor:3.114}); etsRenderLegs(); etsRecalcAll();}
-
 let chartEtsEm, chartEtsCost;
 function ensureEtsCharts(){
   if(!chartEtsEm){
@@ -951,7 +1312,7 @@ function etsRecalcAll(){
   chartEtsCost.data.labels=labels; chartEtsCost.data.datasets[0].data=perCost; chartEtsCost.update();
 }
 
-/* FuelEU */
+/* ===== FuelEU (kept stable) ===== */
 const FE_PATHWAYS=[
   {name:"HFO", intensity:91.10, lhvMJperKg:40.2},
   {name:"MGO/MDO", intensity:91.00, lhvMJperKg:42.7},
@@ -997,7 +1358,6 @@ function feCalc(){
   });
   return {totalE, intensity: totalE>0 ? (weighted/totalE):0};
 }
-
 let chartFeTargets, chartFeCompare;
 function ensureFeCharts(){
   if(!chartFeTargets){
@@ -1043,14 +1403,25 @@ function wire(){
   });
   document.getElementById("optPct").addEventListener("input", ciiRecalcAll);
 
+  document.getElementById("ciiNewFuelPreset").addEventListener("change", ciiPresetChanged);
+
   document.getElementById("etsPrice").addEventListener("input", etsRecalcAll);
   document.getElementById("feYear").addEventListener("change", feRecalcAll);
+
+  window.addEventListener("resize", ()=>{
+    // redraw envelope at new size
+    const year=n(document.getElementById("ciiYear").value,2025);
+    const type=document.getElementById("ciiShipType").value;
+    const cap=Math.max(1,n(document.getElementById("ciiCapacity").value,1));
+    const reqAER=ciiRequiredAER(year,type,cap);
+    drawCiiEnvelope(reqAER);
+  });
 }
 
 /* INIT */
+ciiFillPresetDropdown();
 ciiRenderFuelRows();
 ciiUpdateOptFrom();
-ciiInitFuelPresets();   // ✅ new
 wire();
 ciiRecalcAll();
 
